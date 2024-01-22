@@ -7,37 +7,37 @@ class ErrorInterceptor extends Interceptor {
 
   @override
   Future<void> onError(
-    DioError err,
+    DioException err,
     ErrorInterceptorHandler handler,
   ) async {
     switch (err.type) {
-      case DioErrorType.cancel:
-      case DioErrorType.connectionTimeout:
-      case DioErrorType.sendTimeout:
-      case DioErrorType.receiveTimeout:
+      case DioExceptionType.cancel:
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
         break;
-      case DioErrorType.badResponse:
+      case DioExceptionType.badResponse:
         switch (err.response?.statusCode) {
-          case 400:
+          case HttpStatus.badRequest:
             break;
-          case 404:
+          case HttpStatus.notFound:
             break;
-          case 500:
+          case HttpStatus.internalServerError:
             break;
         }
         break;
-      case DioErrorType.connectionError:
-        // TODO: Handle this case.
+      case DioExceptionType.connectionError:
+        // TODO(Kemal): Handle connectionError case
         break;
-      case DioErrorType.badCertificate:
-        // TODO: Handle this case.
+      case DioExceptionType.badCertificate:
+        // TODO(Kemal): Handle badCertificate case
         break;
-      case DioErrorType.unknown:
-        // TODO: Handle this case.
+      case DioExceptionType.unknown:
+        // TODO(Kemal): Handle unknown case
         break;
     }
 
-    if (err.response?.statusCode != 401) {
+    if (err.response?.statusCode != HttpStatus.unauthorized) {
       return handler.next(err);
     }
     final Response<dynamic> response =
@@ -46,9 +46,49 @@ class ErrorInterceptor extends Interceptor {
   }
 
   Future<void> handle401Error(
-    DioError error,
+    DioException error,
     ErrorInterceptorHandler handler,
   ) async {
-    return handler.next(error);
+    if (appLocator<AuthHiveProvider>().getAuthData()?.refreshToken == null) {
+      await appLocator<LogoutUseCase>().execute(const NoParams());
+      return handler.resolve(error.response!);
+    }
+    if (appLocator<AuthHiveProvider>().getAuthData() != null) {
+      if (JwtDecoder.isExpired(appLocator<AuthHiveProvider>().getAuthData()!.refreshToken)) {
+        await appLocator<LogoutUseCase>().execute(const NoParams());
+        return handler.resolve(error.response!);
+      }
+    }
+
+    if (error.response != null && (error.response?.statusCode == 401)) {
+      try {
+        final AuthDataEntity? oldToken = appLocator<AuthHiveProvider>().getAuthData();
+
+        final AuthDataEntity token =
+            await appLocator<AuthApiProvider>().refreshToken(oldToken?.refreshToken ?? '');
+
+        await appLocator<AuthHiveProvider>().updateAuthData(token);
+
+        final RequestOptions requestOptions = error.response!.requestOptions;
+        requestOptions.headers['Authorization'] = 'Bearer ${token.accessToken}';
+        final Response response = await dio.request<dynamic>(
+          requestOptions.path,
+          cancelToken: requestOptions.cancelToken,
+          data: requestOptions.data,
+          queryParameters: requestOptions.queryParameters,
+          options: Options(
+            method: requestOptions.method,
+            headers: requestOptions.headers,
+          ),
+        );
+        return handler.resolve(response);
+      } catch (_) {
+        await appLocator<LogoutUseCase>().execute(const NoParams());
+        return handler.next(error);
+      }
+    } else {
+      await appLocator<LogoutUseCase>().execute(const NoParams());
+      return handler.resolve(error.response!);
+    }
   }
 }

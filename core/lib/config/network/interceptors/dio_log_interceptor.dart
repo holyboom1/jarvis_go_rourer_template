@@ -1,16 +1,13 @@
-
-
 import 'package:dio/dio.dart';
 
-import '../../../logger/logger.dart';
-
+import '../../../logger/app_logger.dart';
 
 final InterceptorsWrapper dioLoggerInterceptor = InterceptorsWrapper(
   onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
     final String headers = options.headers.entries
         .map((MapEntry<String, dynamic> entry) => '${entry.key}: ${entry.value}')
         .join('\n');
-    AppLogger().debug(
+    AppLogger.debug(
       'NETWORK REQUEST: ${options.method} ${options.uri}\n'
       'Query: ${options.data}\n'
       'Headers:\n$headers',
@@ -19,18 +16,18 @@ final InterceptorsWrapper dioLoggerInterceptor = InterceptorsWrapper(
   },
   onResponse: (Response<dynamic> response, ResponseInterceptorHandler handler) async {
     if (response.data != null || response.data != <dynamic>[]) {
-      AppLogger().info(
+      AppLogger.info(
         'NETWORK RESPONSE [code ${response.statusCode}]:\n'
         '🟢 ${response.data} 🟢',
       );
     }
     handler.next(response);
   },
-  onError: (DioError error, ErrorInterceptorHandler handler) async {
-    AppLogger().error(
-      'NETWORK ERROR: ${error.error}: ${error.response}\n'
-      'path=${error.requestOptions.path}',
+  onError: (DioException exception, ErrorInterceptorHandler handler) async {
+    AppLogger.error(
+      'NETWORK ERROR: ${exception.error}: ${exception.response}\n'
+      'path=${exception.requestOptions.path}',
     );
-    handler.next(error);
+    handler.next(exception);
   },
 );

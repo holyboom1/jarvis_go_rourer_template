@@ -1,29 +1,31 @@
-part of core_ui;
+import 'package:core/core.dart';
+import 'package:flutter/material.dart';
 
 abstract class AppColors {
-  factory AppColors.of(BuildContext context) {
+  factory AppColors.ofGlobalContext() {
+    final BuildContext? context = appLocator<AppRouter>().navigatorKey.currentContext;
+    if (context == null) {
+      return const DarkColors();
+    }
     final Brightness brightness = Theme.of(context).brightness;
-    return brightness == Brightness.light
-        ? const LightColors()
-        : const DarkColors();
+    return brightness == Brightness.light ? const LightColors() : const DarkColors();
   }
 
-  Color get primaryBg;
-
-  Color get white;
+  factory AppColors.of(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+    return brightness == Brightness.light ? const LightColors() : const DarkColors();
+  }
+  //MAIN COLOR SCHEME
+  Color get template;
 }
 
-class DarkColors extends LightColors {
+class DarkColors implements AppColors {
   const DarkColors();
+
+  @override
+  Color get template => Colors.red;
 }
 
-class LightColors implements AppColors {
+class LightColors extends DarkColors {
   const LightColors();
-
-  @override
-  // RGBO(236, 239, 241, 1)
-  Color get primaryBg => const Color(0xFFeceff1);
-
-  @override
-  Color get white => const Color.fromRGBO(255, 255, 255, 1);
 }

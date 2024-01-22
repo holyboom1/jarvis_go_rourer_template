@@ -1,7 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 
-import 'package:dio/dio.dart';
-import '../app_config.dart';
+import 'package:data/data.dart';
+import 'package:data/providers/api/api_providers.dart';
+import 'package:data/providers/local/auth/auth_local_data_provider.dart';
+import 'package:domain/domain.dart';
+import 'package:domain/usecases/usecase.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
+import '../../core.dart';
 import 'interceptors/dio_log_interceptor.dart';
 
 part 'interceptors/error_interceptor.dart';
@@ -10,7 +17,7 @@ part 'interceptors/response_interceptor.dart';
 
 class DioConfig {
   final AppConfig appConfig;
-  static const int timeout = 10 * 1000;
+  static const Duration timeout = Duration(seconds: 10);
 
   final Dio _dio = Dio();
 
@@ -18,18 +25,14 @@ class DioConfig {
 
   DioConfig({required this.appConfig}) {
     _dio
-      ..options.baseUrl = appConfig.baseUrl
+      ..options.baseUrl = appConfig.baseUrlDjango
+      ..options.connectTimeout = timeout
+      ..options.connectTimeout = timeout
       ..interceptors.addAll(<Interceptor>[
-        RequestInterceptor(_dio, headers),
+        RequestInterceptor(_dio),
         ErrorInterceptor(_dio),
         ResponseInterceptor(_dio),
         dioLoggerInterceptor,
       ]);
-  }
-
-  Map<String, String> headers = <String, String>{};
-
-  void setToken(String? token) {
-    headers['authtoken'] = token ?? '';
   }
 }

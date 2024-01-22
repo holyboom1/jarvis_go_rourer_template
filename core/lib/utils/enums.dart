@@ -1,1 +1,1 @@
-
+enum BoostButtonStyles { blue, gold }

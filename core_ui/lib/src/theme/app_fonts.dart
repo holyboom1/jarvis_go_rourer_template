@@ -1,8 +1,9 @@
-part of core_ui;
+import 'package:flutter/material.dart';
+
+import 'app_dimens.dart';
 
 class AppFonts {
-  static TextStyle normal13 = const TextStyle(
-    fontWeight: FontWeight.w400,
-    fontSize: 13,
-  );
+  static TextStyle get normal12 => TextStyle(
+        fontSize: AppDimens.fontSize12,
+      );
 }
