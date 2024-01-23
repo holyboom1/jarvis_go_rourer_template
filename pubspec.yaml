@@ -1,5 +1,5 @@
-name: liquid_2_mobile_app
-description: Liquid Mining 2.0 Project.
+name: {project_name}
+description: {project_description}
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -36,9 +36,6 @@ flutter:
   uses-material-design: true
 
   fonts:
-    - family: Inter
-      fonts:
-        - asset: core/resources/fonts/Inter.ttf
-    - family: Unbounded
-      fonts:
-        - asset: core/resources/fonts/Unbounded.ttf
+#    - family: Inter
+#      fonts:
+#        - asset: core/resources/fonts/Inter.ttf

@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PROD" type="FlutterRunConfigurationType" factoryName="Flutter">
-    <option name="additionalArgs"
-        value="--dart-define=environment=prod --dart-define=CARROT_API_KEY=58939-f9e1db16959f9a1a67145f80f2 --dart-define=CARROT_APP_ID=58939 --dart-define=CARROT_USER_AUTH_KEY=userauthkey-58939-2db96fb7cc3a95cef96e1df0f83a05ed433190ff7e6aa4addd1b9208b3b31c" />
+    <option name="additionalArgs" value="--dart-define=environment=prod" />
     <option name="buildFlavor" value="prod" />
     <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
     <method v="2" />
