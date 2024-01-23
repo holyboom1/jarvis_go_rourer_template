@@ -1,9 +1,9 @@
-# ${project_name}
+# {project_name}
 ${project_description}
 
 ## 1. GitFlow
 Branches: main, dev, feature/${jira_prefix}-1, bugfix/${jira_prefix}-1.
-Commit name structure: [${jira_prefix}-1] Description
+Commit name structure: [{jira_prefix}-1] Description
 Merge request should contain no more than 40 files
 
 ## 2. Architecture
