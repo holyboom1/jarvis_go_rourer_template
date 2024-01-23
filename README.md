@@ -1,5 +1,5 @@
 # {project_name}
-${project_description}
+{project_description}
 
 ## 1. GitFlow
 Branches: main, dev, feature/${jira_prefix}-1, bugfix/${jira_prefix}-1.
