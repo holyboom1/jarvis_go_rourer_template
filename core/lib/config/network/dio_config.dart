@@ -25,7 +25,7 @@ class DioConfig {
 
   DioConfig({required this.appConfig}) {
     _dio
-      ..options.baseUrl = appConfig.baseUrlDjango
+      ..options.baseUrl = appConfig.baseUrl
       ..options.connectTimeout = timeout
       ..options.connectTimeout = timeout
       ..interceptors.addAll(<Interceptor>[
