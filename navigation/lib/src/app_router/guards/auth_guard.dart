@@ -2,22 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../../navigation.dart';
 
-class AuthGuard extends AutoRouteGuard {
+class AuthGuard {
   final AuthService authService;
 
   AuthGuard(this.authService);
 
-  @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) {
-    resolver.next();
-
-    // if (!authService.isAuthenticated) {
-    //   router.pushAndPopUntil(
-    //     const SignInRoute(),
-    //     predicate: (Route r) => true,
-    //   );
-    // } else {
-    //   resolver.next();
-    // }
+  Future<String?> handleRedirect(BuildContext context, GoRouterState state) async {
+    if (!authService.isAuthenticated) {
+      return '/signin';
+    } else {
+      return null;
+    }
   }
 }

@@ -1,6 +1,6 @@
 library navigation;
 
-export 'package:auto_route/auto_route.dart';
+export 'package:go_router/go_router.dart';
 
 export 'src/app_router/app_router.dart';
 export 'src/app_router/services/auth_service.dart';
